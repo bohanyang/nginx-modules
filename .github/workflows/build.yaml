@@ -16,8 +16,10 @@ jobs:
       - name: Build packages
         run: |
           set -ex
-          docker build --build-arg ENABLED_MODULES -t builder .
-          docker cp "$(docker create builder):/tmp/packages/." .
+          docker build --build-arg ENABLED_MODULES -t buster-build - < buster.Dockerfile
+          docker build --build-arg ENABLED_MODULES -t focal-build - < focal.Dockerfile
+          docker cp "$(docker create buster-build):/tmp/packages/." .
+          docker cp "$(docker create focal-build):/tmp/packages/." .
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
