@@ -1,5 +1,6 @@
 FROM ubuntu:focal
 
+ARG DEBIAN_FRONTEND=noninteractive
 ARG NGINX_VERSION=1.19.7
 ARG ENABLED_MODULES
 

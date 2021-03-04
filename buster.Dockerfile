@@ -1,5 +1,6 @@
 FROM debian:buster-slim
 
+ARG DEBIAN_FRONTEND=noninteractive
 ARG NGINX_VERSION=1.19.7
 ARG ENABLED_MODULES
 
