@@ -1,7 +1,8 @@
 FROM debian:buster-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
-ARG NGINX_VERSION=1.19.8
+ARG NGINX_VERSION=1.19.9
+ARG PKG_RELEASE=1
 ARG ENABLED_MODULES
 
 RUN set -eu; \
@@ -18,7 +19,7 @@ RUN set -eux \
                 patch make wget mercurial devscripts debhelper dpkg-dev \
                 quilt lsb-release build-essential libxml2-utils xsltproc \
                 equivs git g++ \
-    && hg clone https://hg.nginx.org/pkg-oss/ \
+    && hg clone -r $NGINX_VERSION-$PKG_RELEASE https://hg.nginx.org/pkg-oss/ \
     && cd pkg-oss \
     && mkdir /tmp/packages \
     && for module in $ENABLED_MODULES; do \
@@ -47,7 +48,7 @@ RUN set -eux \
         elif make -C /pkg-oss/debian list | grep -P "^$module\s+\d" > /dev/null; then \
             echo "Building $module from pkg-oss sources"; \
             cd /pkg-oss/debian; \
-            make rules-module-$module BASE_VERSION=$NGINX_VERSION; \
+            make rules-module-$module BASE_VERSION=$NGINX_VERSION NGINX_VERSION=$NGINX_VERSION; \
             mk-build-deps --install --tool="apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends --yes" debuild-module-$module/nginx-$NGINX_VERSION/debian/control; \
             make module-$module BASE_VERSION=$NGINX_VERSION; \
             find ../../ -maxdepth 1 -mindepth 1 -type f -name "*.deb" -exec mv -v {} /tmp/packages/ \;; \
