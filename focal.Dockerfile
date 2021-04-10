@@ -22,7 +22,7 @@ RUN set -eux; \
     wget -O- https://hg.nginx.org/xslscript/archive/default.tar.gz | tar -xzvf- -C /usr/local/bin --strip-components=1 xslscript-default/xslscript.pl; \
     hg clone -r "$NGINX_VERSION-$PKG_RELEASE" https://hg.nginx.org/pkg-oss/; \
     cd pkg-oss; \
-    mkdir /tmp/packages; \
+    mkdir /packages; \
     for module in $ENABLED_MODULES; do \
         echo "Building $module for nginx-$NGINX_VERSION"; \
         if [ -d "/modules/$module" ]; then \
@@ -52,14 +52,14 @@ RUN set -eux; \
                 build_script="$build_script-$module"; \
                 chmod a+rx "$build_script"; \
             fi; \
-            "$build_script" -v "$NGINX_VERSION" -f -y -o /tmp/packages -n "$module" "$(cat "/modules/$module/source")"; \
+            "$build_script" -v "$NGINX_VERSION" -f -y -o /packages -n "$module" "$(cat "/modules/$module/source")"; \
         elif make -C /pkg-oss/debian list | grep -P "^$module\s+\d" > /dev/null; then \
             echo "Building $module from pkg-oss sources"; \
             cd /pkg-oss/debian; \
             make "rules-module-$module" "BASE_VERSION=$NGINX_VERSION" "NGINX_VERSION=$NGINX_VERSION"; \
             mk-build-deps --install --tool="apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends --yes" "debuild-module-$module/nginx-$NGINX_VERSION/debian/control"; \
             make "module-$module" "BASE_VERSION=$NGINX_VERSION"; \
-            find ../../ -maxdepth 1 -mindepth 1 -type f -name "*.deb" -exec mv -v {} /tmp/packages/ \;; \
+            find ../../ -maxdepth 1 -mindepth 1 -type f -name "*.deb" -exec mv -v {} /packages \;; \
         else \
             echo "Don't know how to build $module module, exiting"; \
             exit 1; \

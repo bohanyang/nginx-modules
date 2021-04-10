@@ -6,20 +6,17 @@ on:
       - 'v*'
 
 env:
-  ENABLED_MODULES: brotli geoip2 httpipdb streamipdb
+  ENABLED_MODULES: ipdbhttp ipdbstream
 
 jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v1
-      - name: Build packages
-        run: |
-          set -ex
-          docker build --build-arg ENABLED_MODULES -f buster.Dockerfile -t buster-build .
-          docker build --build-arg ENABLED_MODULES -f focal.Dockerfile -t focal-build .
-          docker cp "$(docker create buster-build):/tmp/packages/." .
-          docker cp "$(docker create focal-build):/tmp/packages/." .
+      - name: Debian 10
+        run: ./build.sh buster
+      # - name: Ubuntu 20.04
+      #   run: ./build.sh focal
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
@@ -29,21 +26,20 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
           draft: false
-          prerelease: false
-      - name: Upload to release assets
+          prerelease: true
+      - name: Upload repository to release assets
         env:
           token: ${{ secrets.GITHUB_TOKEN }}
           url: ${{ steps.create_release.outputs.upload_url }}
         run: |
-          set -ex
+          set -eux
           url=${url%%\{*}
-          for module in $ENABLED_MODULES; do
-            for deb in nginx-module-"$module"_*.deb; do
-              curl -f -X POST -D - \
+          dir=repository
+          file="$dir.tar"
+          tar -cvf "$file" "$dir"
+          curl -f -X POST -D - \
                 -H "Authorization: token $token" \
                 -H 'Accept: application/vnd.github.v3+json' \
-                -H 'Content-Type: application/vnd.debian.binary-package' \
-                --data-binary "@$deb" \
-                "$url?name=$deb"
-            done
-          done
+                -H 'Content-Type: application/tar' \
+                --data-binary "@$file" \
+                "$url?name=$file"
