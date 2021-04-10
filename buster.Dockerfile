@@ -2,7 +2,7 @@ FROM debian:buster-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG NGINX_VERSION=1.19.9
-ARG PKG_RELEASE=1
+ARG BASE_RELEASE=1
 ARG ENABLED_MODULES
 
 RUN set -eu; \
@@ -20,9 +20,9 @@ RUN set -eux; \
         quilt lsb-release build-essential libxml2-utils xsltproc \
         equivs git g++ libparse-recdescent-perl; \
     wget -O- https://hg.nginx.org/xslscript/archive/default.tar.gz | tar -xzvf- -C /usr/local/bin --strip-components=1 xslscript-default/xslscript.pl; \
-    hg clone -r "$NGINX_VERSION-$PKG_RELEASE" https://hg.nginx.org/pkg-oss/; \
+    hg clone -r "$NGINX_VERSION-$BASE_RELEASE" https://hg.nginx.org/pkg-oss/; \
     cd pkg-oss; \
-    mkdir /tmp/packages; \
+    mkdir /packages; \
     for module in $ENABLED_MODULES; do \
         echo "Building $module for nginx-$NGINX_VERSION"; \
         if [ -d "/modules/$module" ]; then \
@@ -52,14 +52,14 @@ RUN set -eux; \
                 build_script="$build_script-$module"; \
                 chmod a+rx "$build_script"; \
             fi; \
-            "$build_script" -v "$NGINX_VERSION" -f -y -o /tmp/packages -n "$module" "$(cat "/modules/$module/source")"; \
+            "$build_script" -v "$NGINX_VERSION" -f -y -o /packages -n "$module" "$(cat "/modules/$module/source")"; \
         elif make -C /pkg-oss/debian list | grep -P "^$module\s+\d" > /dev/null; then \
             echo "Building $module from pkg-oss sources"; \
             cd /pkg-oss/debian; \
-            make "rules-module-$module" "BASE_VERSION=$NGINX_VERSION" "NGINX_VERSION=$NGINX_VERSION"; \
+            make "rules-module-$module"; \
             mk-build-deps --install --tool="apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends --yes" "debuild-module-$module/nginx-$NGINX_VERSION/debian/control"; \
-            make "module-$module" "BASE_VERSION=$NGINX_VERSION"; \
-            find ../../ -maxdepth 1 -mindepth 1 -type f -name "*.deb" -exec mv -v {} /tmp/packages/ \;; \
+            make "module-$module"; \
+            find ../../ -maxdepth 1 -mindepth 1 -type f -name "*.deb" -exec mv -v {} /packages \;; \
         else \
             echo "Don't know how to build $module module, exiting"; \
             exit 1; \
