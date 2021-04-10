@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 env:
-  ENABLED_MODULES: brotli geoip2
+  ENABLED_MODULES: brotli geoip2 httpipdb streamipdb
 
 jobs:
   build:
@@ -16,8 +16,8 @@ jobs:
       - name: Build packages
         run: |
           set -ex
-          docker build --build-arg ENABLED_MODULES -t buster-build - < buster.Dockerfile
-          docker build --build-arg ENABLED_MODULES -t focal-build - < focal.Dockerfile
+          docker build --build-arg ENABLED_MODULES -f buster.Dockerfile -t buster-build .
+          docker build --build-arg ENABLED_MODULES -f focal.Dockerfile -t focal-build .
           docker cp "$(docker create buster-build):/tmp/packages/." .
           docker cp "$(docker create focal-build):/tmp/packages/." .
       - name: Create release

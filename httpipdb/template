@@ -1,0 +1,2 @@
+MODULE_CC_OPT_$MODULE_NAME=-Wno-error=unused-result
+MODULE_CC_OPT_DEBUG_$MODULE_NAME=-Wno-error=unused-result
