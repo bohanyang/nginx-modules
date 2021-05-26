@@ -24,5 +24,3 @@ sudo apt update
 
 * `nginx-module-brotli` - [ngx_brotli](https://github.com/google/ngx_brotli)
 * `nginx-module-geoip2` - [ngx_http_geoip2_module](https://github.com/leev/ngx_http_geoip2_module)
-* `nginx-module-ipdbhttp` - [ngx_http_ipdb_module](https://github.com/vislee/ngx_http_ipdb_module)
-* `nginx-module-ipdbstream` - [ngx_stream_ipdb_module](https://github.com/vislee/ngx_stream_ipdb_module)

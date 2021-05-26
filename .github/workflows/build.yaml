@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 env:
-  ENABLED_MODULES: brotli geoip2 ipdbhttp ipdbstream
+  ENABLED_MODULES: brotli geoip2
 
 jobs:
   build:

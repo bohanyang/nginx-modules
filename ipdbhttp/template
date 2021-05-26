@@ -1,7 +1,0 @@
-MODULE_PACKAGE_VENDOR=Bohan Yang <youthdna@live.com>
-MODULE_PACKAGE_URL=https://github.com/bohanyang/nginx-modules
-MODULE_SUMMARY_$MODULE_NAME=IPDB (the IP database format of IPIP.net) dynamic http module
-MODULE_VERSION_$MODULE_NAME=\$(MODULE_TARGET_PREFIX)0.1
-MODULE_RELEASE_$MODULE_NAME=1
-MODULE_CC_OPT_$MODULE_NAME=-Wno-error=unused-result
-MODULE_CC_OPT_DEBUG_$MODULE_NAME=-Wno-error=unused-result
