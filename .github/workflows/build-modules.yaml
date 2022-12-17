@@ -6,6 +6,7 @@ on:
       - '**'
 
 env:
+  NGINX_VERSION: '1.23.3'
   ENABLED_MODULES: brotli headers-more
 
 jobs:
@@ -44,7 +45,7 @@ jobs:
         with:
           file: ./Dockerfile
           context: .
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           outputs: |
             type=image,push=false
           build-args: |

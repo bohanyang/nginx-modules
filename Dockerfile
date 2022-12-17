@@ -1,4 +1,6 @@
-FROM nginx:1.23.3-alpine as builder
+ARG NGINX_VERSION
+
+FROM nginx:${NGINX_VERSION}-alpine as builder
 
 ARG ENABLED_MODULES
 
