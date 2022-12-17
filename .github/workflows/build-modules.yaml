@@ -52,3 +52,4 @@ jobs:
             GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
             UPLOAD_URL=${{ env.UPLOAD_URL }}
             ENABLED_MODULES=${{ env.ENABLED_MODULES }}
+            NGINX_VERSION=${{ env.NGINX_VERSION }}
