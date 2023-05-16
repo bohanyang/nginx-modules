@@ -6,7 +6,7 @@ on:
       - '**'
 
 env:
-  NGINX_VERSION: '1.23.3'
+  NGINX_VERSION: '1.23.4'
   ENABLED_MODULES: brotli headers-more
 
 jobs:
